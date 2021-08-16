@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	protocol "iochen.com/v2gen/v2/common/protocol"
 	"unicode"
 
 	"iochen.com/v2gen/v2/common/base64"
@@ -23,14 +24,14 @@ type Link struct {
 	TLS  string      `json:"tls"`
 }
 
-var (
-	ErrWrongProtocol = errors.New("wrong protocol")
-)
-
 // ParseSingle parses single vmess URL into Link structure
 func ParseSingle(vmessURL string) (*Link, error) {
+	protocol, err := protocol.GetProtocol(vmessURL)
+	if err != nil {
+		return &Link{}, err
+	}
+
 	if len(vmessURL) < 8 {
-		return &Link{}, errors.New(fmt.Sprint("wrong url:", vmessURL))
 	}
 	if vmessURL[:8] != "vmess://" {
 		return &Link{}, ErrWrongProtocol
