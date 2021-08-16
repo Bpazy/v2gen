@@ -16,7 +16,7 @@ const (
 func GetProtocol(uri string) (ProtocolType, error) {
 	split := strings.Split(uri, "://")
 	if len(split) == 0 {
-		return noneProtocolType(uri)
+		return noneProtocolType()
 	}
 	switch split[0] {
 	case "ss":
@@ -24,9 +24,11 @@ func GetProtocol(uri string) (ProtocolType, error) {
 	case "vmess":
 		return Vmess, nil
 	}
-	return noneProtocolType(uri)
+	return noneProtocolType()
 }
 
-func noneProtocolType(uri string) (ProtocolType, error) {
-	return None, errors.New("no supported protocol found: " + uri)
+var ErrWrongProtocol = errors.New("wrong protocol")
+
+func noneProtocolType() (ProtocolType, error) {
+	return None, ErrWrongProtocol
 }

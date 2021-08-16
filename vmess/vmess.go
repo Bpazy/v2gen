@@ -26,25 +26,25 @@ type Link struct {
 
 // ParseSingle parses single vmess URL into Link structure
 func ParseSingle(vmessURL string) (*Link, error) {
-	protocol, err := protocol.GetProtocol(vmessURL)
+	p, err := protocol.GetProtocol(vmessURL)
 	if err != nil {
 		return &Link{}, err
 	}
 
-	if len(vmessURL) < 8 {
-	}
-	if vmessURL[:8] != "vmess://" {
-		return &Link{}, ErrWrongProtocol
-	}
+	switch p {
+	case protocol.Vmess:
+		j, err := base64.Decode(vmessURL[8:])
+		if err != nil {
+			return &Link{}, err
+		}
 
-	j, err := base64.Decode(vmessURL[8:])
-	if err != nil {
-		return &Link{}, err
-	}
+		lk := &Link{}
+		err = json.Unmarshal([]byte(j), lk)
+		return lk, err
+	case protocol.Shadowsocks:
 
-	lk := &Link{}
-	err = json.Unmarshal([]byte(j), lk)
-	return lk, err
+	}
+	return &Link{}, errors.New("protocol not implemented")
 }
 
 func Parse(s string) ([]*Link, error) {
@@ -53,7 +53,7 @@ func Parse(s string) ([]*Link, error) {
 	for i := 0; i < len(urlList); i++ {
 		lk, err := ParseSingle(urlList[i])
 		if err != nil {
-			if err == ErrWrongProtocol {
+			if err == protocol.ErrWrongProtocol {
 				continue
 			} else {
 				return nil, err

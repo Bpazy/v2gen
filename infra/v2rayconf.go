@@ -179,6 +179,65 @@ const ConfigTpl = `{
 	}
 }`
 
+const vmessOutbound = `
+{
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [
+        {
+          "address": "{{address}}",
+          "port": {{serverPort}},
+          "users": [
+            {
+              "id": "{{uuid}}",
+              "alterId": {{aid}},
+              "security": "{{security}}"
+            }
+          ]
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "{{network}}",
+      "security": "{{streamSecurity}}",
+      "tlsSettings": {{tls}},
+      "kcpSettings": {{kcp}},
+      "wsSettings": {{ws}},
+      "httpSettings": {{http}},
+      "quicSettings": {{quic}},
+	  "mux": {
+  		"enabled": {{mux}},
+      	"concurrency": {{concurrency}}
+      }
+    }
+}
+`
+
+const ssOutbound = `
+{
+  "protocol": "shadowsocks",
+  "settings": {
+	"servers": [
+	  {
+		"address": "{{address}}",
+		"method": "aes-256-gcm",
+		"ota": false,
+		"password": "hxsyxw3lxwu",
+		"port": {{serverPort}},
+		"level": 1
+	  }
+	]
+  },
+  "streamSettings": {
+	"network": "tcp"
+  },
+  "mux": {
+	"enabled": false,
+	"concurrency": -1
+  }
+}
+`
+
 const ChinaSites = `
 {
 	"type": "field",
